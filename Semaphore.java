@@ -9,7 +9,7 @@ public class Semaphore {
         value = initial;
     }
 
-    public synchronized void P() {
+    public synchronized boolean P() {
         /*
           process is entering a critical section
           If the semaphore value is greater than or equal to 0, the process can proceed
@@ -18,9 +18,11 @@ public class Semaphore {
         if (value < 0)
             try {
                 wait();
+                return false;
             } catch (InterruptedException e) {
 
             }
+        return true;
     }
 
     public synchronized void V() {
