@@ -1,37 +1,39 @@
-public class Device extends Thread {
+class Device implements Runnable {
     public String name;
     public String type;
+    private final Router router;
 
-
-    public Device(String name, String type) {
+    public Device(String name, String type, Router router) {
         this.name = name;
         this.type = type;
+        this.router = router;
     }
 
+    @Override
     public void run() {
-        connect();
         try {
-            wait(1000);
+            int id = router.connect(this);
+            System.out.println("(" + this.name + ") " + "(" + this.getType() + ") Occupied");
+            Thread.sleep(1000);
+
+            performOnlineActivity(id);
+
+            Thread.sleep(1000);
+            router.disconnect(this);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
-        PerformOnlineActivity();
-        try {
-            wait(3000);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-        LogOut();
     }
 
-    public void connect(){
-        System.out.println("Connect");
+    public String getType(){
+        return this.type;
     }
-    public void PerformOnlineActivity(){
-        System.out.println("Perform online activity");
+
+    public void performOnlineActivity(int id){
+        System.out.println("Connection " + id + ": " + name + " performs online activity");
     }
-    public void LogOut(){
-        System.out.println("Log out");
-    }
+//    public void logOut(){
+//        System.out.println("Connection " + router.getConnectionId(this) + ": " + name + " Logged out");
+//    }
 
 }

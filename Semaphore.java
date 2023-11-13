@@ -1,4 +1,5 @@
-public class Semaphore {
+@SuppressWarnings("CallToPrintStackTrace")
+class Semaphore {
     protected int value = 0;
 
     protected Semaphore() {
@@ -9,29 +10,28 @@ public class Semaphore {
         value = initial;
     }
 
-    public synchronized boolean P() {
-        /*
-          process is entering a critical section
-          If the semaphore value is greater than or equal to 0, the process can proceed
-        */
+    // This method acquires a permit (decrement the max size).
+    // There is a working device now on router
+    // from 2 (MAX) to 1 (one place is free)
+    //`synchronized` : ensuring that only one thread can execute this method at a time
+    public synchronized void P(Device device) {
         value--;
-        if (value < 0)
+        if (value < 0) {
             try {
+                System.out.println("(" + device.name + ") (" + device.getType() + ") arrived and waiting");
                 wait();
-                return false;
-            } catch (InterruptedException e) {
-
+            } catch (InterruptedException ignored) {
             }
-        return true;
+        }
+        else{
+            System.out.println("(" + device.name + ") " + "(" + device.getType() + ") arrived");
+        }
     }
 
-    public synchronized void V() {
-        /*
-         called when a process exits a critical section
-
-         */
+    // This method releases a permit (increment the max size).
+    public synchronized void V(Device device, int connection) {
+        System.out.println("Connection " + connection + ": (" + device.name + ")" + " logged out");
         value++;
-        if (value <= 0)
-            notify();
+        if (value <= 0) notify();
     }
 }
