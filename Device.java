@@ -1,4 +1,5 @@
-class Device implements Runnable {
+
+class Device extends Thread {
     public String name;
     public String type;
     private final Router router;
@@ -14,11 +15,11 @@ class Device implements Runnable {
         try {
             int id = router.connect(this);
             System.out.println("(" + this.name + ") " + "(" + this.getType() + ") Occupied");
-            Thread.sleep(1000);
+            Thread.sleep(200);
 
             performOnlineActivity(id);
 
-            Thread.sleep(1000);
+            Thread.sleep(100);
             router.disconnect(this);
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -30,6 +31,8 @@ class Device implements Runnable {
     }
 
     public void performOnlineActivity(int id){
+
+        System.out.println("Connection " + id + ": " + name + " Log in");
         System.out.println("Connection " + id + ": " + name + " performs online activity");
     }
 //    public void logOut(){

@@ -19,7 +19,9 @@ class Semaphore {
         if (value < 0) {
             try {
                 System.out.println("(" + device.name + ") (" + device.getType() + ") arrived and waiting");
-                wait();
+                while(value<0) {
+                    wait();
+                }
             } catch (InterruptedException ignored) {
             }
         }

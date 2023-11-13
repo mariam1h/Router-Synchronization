@@ -1,7 +1,11 @@
+import java.io.FileDescriptor;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 import java.util.*;
 
     public class Network {
-        public static void main(String[] args) {
+
+        public static void main(String[] args) throws InterruptedException {
             int N;
             int TC;
             ArrayList<Device> TC_lines = new ArrayList<>();
@@ -14,24 +18,34 @@ import java.util.*;
 
             Router router = new Router(N);
 
-            for (int i = 0; i < TC; i++) {
-                String name , type;
-                name = input.next();
-                type = input.next();
-                Device device = new Device(name,type,router);
-                TC_lines.add(device);
-            }
+            // Redirect System.out to a file
+            try (PrintStream fileStream = new PrintStream(new FileOutputStream("output.txt"))) {
+                System.setOut(fileStream);
 
+                for (int i = 0; i < TC; i++) {
+                    String name, type;
+                    name = input.next();
+                    type = input.next();
+                    Device device = new Device(name, type, router);
+                    TC_lines.add(device);
+                }
 
-            for (Device device : TC_lines) {
-                device.run();
+                for (Device device : TC_lines) {
+                    device.start();
+                }
+
+                try {
+                    for (Device device : TC_lines) {
+                        device.join();
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("Join interrupted");
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                // Reset System.out to the console
+                System.setOut(new PrintStream(new FileOutputStream(FileDescriptor.out)));
             }
-//            try {
-//                for (Device device : TC_lines) {
-//                    device.join();
-//                }
-//            } catch (InterruptedException e) {
-//                System.out.println("Join interrupted");
-//            }
         }
     }
